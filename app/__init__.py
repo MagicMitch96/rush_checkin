@@ -12,6 +12,9 @@ LOG = logging.getLogger('werkzeug')
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 app = Flask(__name__)
+app.config.update(
+    DEBUG = True,
+)
 
 # app configuration
 app.config['SECRET_KEY'] = 'alphasig'
