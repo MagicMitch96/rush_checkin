@@ -6,9 +6,9 @@
     <div class="masthead">
         <ul class="nav nav-pills pull-right">
             <li><a href="{{ url_for('add') }}" class="btn btn-info">Back to Check In</a></li>
-            <li><a href="{{ url_for('static', filename='lists/hard-yes.tsv') }}" class="btn btn-success">Download Hard Yes List</a></li>
-            <li><a href="{{ url_for('static', filename='lists/hard-no.tsv') }}" class="btn btn-danger">Download Hard No List</a></li>
-            <li><a href="{{ url_for('static', filename='lists/pile.tsv') }}" class="btn btn-warning">Download Pile List</a></li>
+            <li><a href="{{ url_for('download_list', list_type='hard-yes') }}" class="btn btn-success">Download Hard Yes List</a></li>
+            <li><a href="{{ url_for('download_list', list_type='hard-no') }}" class="btn btn-danger">Download Hard No List</a></li>
+            <li><a href="{{ url_for('download_list', list_type='pile') }}" class="btn btn-warning">Download Pile List</a></li>
         </ul>
         <h1>Rushee List</h1>
 
@@ -35,7 +35,7 @@
             </span>
             </h4>
             <p><b>Year:</b> {{ rushee.year }} -- <b>Dorm:</b> {{ rushee.dorm }}</p>
-            <img src={{ url_for('static', filename=rushee.pic) }}>
+            <img src={{ rushee.pic }}>
             <hr>
         {% endfor %}
     </div>

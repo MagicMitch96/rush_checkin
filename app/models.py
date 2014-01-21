@@ -11,22 +11,24 @@ class Rushee(db.Model):
     year = db.Column(db.String(25))
     pic = db.Column(db.String(100))
     event = db.Column(db.String(10))
-    decided = db.Column(db.String(1))
+    decided = db.Column(db.String(25))
 
     def __init__(self, name, computing_id, dorm, year, pic):
         self.name = name
         self.computing_id = computing_id
         self.dorm = dorm
         self.year = year
-        pic_path = os.path.join(basedir, 
-                                'static/images/rushees/%s.png' %
-                                (computing_id))
-        pic = pic[pic.find('base64,') + len('base64,'):]
-        with open(pic_path, "wb") as pic_file:
-            pic_file.write(pic.decode('base64'))
-        self.pic = 'images/rushees/%s.png' % (computing_id)
+        self.pic = self.upload_to_imgur(pic)
         self.event = time.strftime("%Y-%m-%d")
-        self.decided = 0
+        self.decided = False
 
     def __repr__(self):
         return '<Rushee #%r: %r - %r - %r - %r>' % (self.id, self.name, self.year, self.computing_id, self.dorm)
+
+    def upload_to_imgur(self, pic):
+        import pyimgur
+        CLIENT_ID = "a42e0d6331c2b99"
+        im = pyimgur.Imgur(CLIENT_ID)
+        pic = pic[pic.find("base64,") + len("base64,"):]
+        upload = im.upload_image(url=pic)
+        return upload.link

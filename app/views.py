@@ -1,4 +1,4 @@
-from flask import flash, redirect, render_template, request, url_for
+from flask import flash, redirect, render_template, request, Response, url_for
 
 from app import app, db, basic_auth, basedir, LOG
 from models import Rushee
@@ -15,6 +15,7 @@ def flash_errors(form):
 def add():
     form = RusheeForm()
     if form.validate_on_submit():
+        LOG.info(form.pic.data)
         rushee = Rushee(form.name.data, form.computing_id.data,
                         form.year.data, form.dorm.data,
                         form.pic.data)
@@ -48,15 +49,19 @@ def show_data(date=False):
 @app.route('/decision/<rushee>/<decision_type>')
 def decision(rushee, decision_type):
     rushee = Rushee.query.filter(Rushee.id == rushee)[0]
-    rushee.decided = 1
+    rushee.decided = decision_type
     db.session.commit()
 
-    filename = os.path.join(basedir, "static/lists/%s.tsv" % decision_type)
-    with open(filename, "a+b") as rushee_list:
-        rushee_list.write("%r\t%r\t%r\t%r\n" % (str(rushee.name),
-                                              str(rushee.computing_id),
-                                              str(rushee.year),
-                                              str(rushee.dorm)))
-        LOG.info("Wrote %s to %s list" % (rushee.name, decision_type))
+    LOG.info("Wrote %s to %s list" % (rushee.name, decision_type))
     flash('Successfully added %s to %s list' % (rushee.name, decision_type))
+
     return redirect(request.referrer)
+
+@app.route('/download/<list_type>')
+def download_list(list_type):
+    rushee = Rushee.query.filter(Rushee.decided == list_type)
+    the_list = str("NAME,COMPUTING,YEAR,DORM<br/>")
+    for r in rushee:
+        the_list += str("%s,%s,%s,%s<br/>" % (r.name, r.computing_id, r.year, r.dorm))
+
+    return Response("%r" % the_list, mimetype='text/html')
