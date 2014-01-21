@@ -20,7 +20,7 @@ class Rushee(db.Model):
         self.year = year
         self.pic = self.upload_to_imgur(pic)
         self.event = time.strftime("%Y-%m-%d")
-        self.decided = False
+        self.decided = "False"
 
     def __repr__(self):
         return '<Rushee #%r: %r - %r - %r - %r>' % (self.id, self.name, self.year, self.computing_id, self.dorm)

@@ -38,9 +38,9 @@ def show_data(date=False):
     total_count = Rushee.query.count()
     if date:
         rushees = Rushee.query.filter(Rushee.event == date). \
-                filter(Rushee.decided == 0)
+                filter(Rushee.decided == "False")
     else:
-        rushees = Rushee.query.filter(Rushee.decided == 0)
+        rushees = Rushee.query.filter(Rushee.decided == "False")
 
     decide_count = len(list(rushees))
     return render_template('admin.html', rushees=rushees, total_count=total_count,
