@@ -1,0 +1,132 @@
+{% extends "bootstrap/base.html" %}
+{% import "bootstrap/fixes.html" as fixes %}
+
+{% block content %}
+<div class="container">
+    <div class="masthead">
+        <ul class="nav nav-pills pull-right">
+            <li><a href="{{ url_for('show_data') }}" class="btn btn-primary">Admin Page</a></li>
+        </ul>
+        <h1>Welcome to <span style="color: #9F111B">ΑΣΦ</span></h1>
+
+        <hr>
+
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        {% for message in messages %}
+        <div class="alert alert-info">
+            <strong>{{ message }}</strong>
+            {% endfor %}
+            {% endif %}
+            {% endwith %}
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <table>
+                    <tr>
+                        <td><img src={{ url_for('static', filename='images/crest.png') }} ></td>
+                        <td>
+                            <p>To sign in:</p>
+                            <ol>
+                                <li>Click "Allow" at the top-right corner of the browser to turn on the webcam</li>
+                                <li>Click the "Snap Photo" button</li>
+                                <li>Fill out your name, computing id, year, and address (i.e. Dorm and room #)</li>
+                                <li>Click "Check in" and you're good to go!</li>
+                            </ol>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="col-md-6">
+                <ul class="list-inline">
+                    <li><h4>Video stream:</h4></li>
+                    <li><a class="btn btn-primary" id="snap">Snap Photo</a></li>
+                </ul>
+                <video id="video" width="320" height="240" autoplay></video>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                {% from "_formhelpers.html" import render_field %}
+                <form method="post" role="form" action="{{ url_for('add') }}">
+                    {{ form.csrf_token }}
+
+                    <div class="form-group">
+                        {{ render_field(form.name, class="form-control",
+                                        placeholder="Enter full name") }}
+                    </div>
+                    <div class="form-group">
+                        {{ render_field(form.computing_id, class="form-control",
+                                        placeholder="Enter UVa computing ID") }}
+                    </div>
+                    <div class="form-group">
+                        {{ render_field(form.year, class="form-control") }}
+                    </div>
+                    <div class="form-group">
+                        {{ render_field(form.dorm, class="form-control",
+                                        placeholder="Enter your dorm/apt and room #") }}
+                    </div>
+                    <div class="form-group">
+                        {{ render_field(form.pic) }}
+                    </div>
+                    <input type="submit" value="Check in" class="btn btn-lg btn-primary">
+                </form>
+            </div>
+
+            <div class="col-md-6">
+                <h4>Your photo:</h4>
+                <canvas id="canvas" width="640" height="480"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // HTML5 Camera: http://davidwalsh.name/browser-camera
+    // Put event listeners into place
+    window.addEventListener("DOMContentLoaded", function() {
+
+    // Grab elements, create settings, etc.
+    var canvas = document.getElementById("canvas"),
+        context = canvas.getContext("2d"),
+        video = document.getElementById("video"),
+        videoObj = { "video": true },
+        errBack = function(error) {
+            console.log("Video capture error: ", error.code); 
+        };
+
+        // Put video listeners into place
+        if(navigator.getUserMedia) { // Standard
+        navigator.getUserMedia(videoObj, function(stream) {
+            video.src = stream;
+            video.play();
+            }, errBack);
+        } else if(navigator.webkitGetUserMedia) { // WebKit-prefixed
+        navigator.webkitGetUserMedia(videoObj, function(stream){
+            video.src = window.webkitURL.createObjectURL(stream);
+            video.play();
+            }, errBack);
+        }
+        else if(navigator.mozGetUserMedia) { // Firefox-prefixed
+            navigator.mozGetUserMedia(videoObj, function(stream){
+                    video.src = window.URL.createObjectURL(stream);
+                    video.play();
+                    }, errBack);
+        }
+
+        // Trigger photo take
+        document.getElementById("snap").addEventListener("click", function() {
+            console.log("Captured");
+            context.drawImage(video, 0, 0, 640, 480);
+            document.getElementById('pic').value = canvas.toDataURL();
+        });
+    }, false);
+</script>
+
+{% endblock %}
+
+{% block head %}
+{{super()}}
+{{fixes.ie8()}}
+{% endblock %}

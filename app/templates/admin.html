@@ -1,0 +1,47 @@
+{% extends "bootstrap/base.html" %}
+{% import "bootstrap/fixes.html" as fixes %}
+
+{% block content %}
+<div class="container">
+    <div class="masthead">
+        <ul class="nav nav-pills pull-right">
+            <li><a href="{{ url_for('add') }}" class="btn btn-info">Back to Check In</a></li>
+            <li><a href="{{ url_for('static', filename='lists/hard-yes.tsv') }}" class="btn btn-success">Download Hard Yes List</a></li>
+            <li><a href="{{ url_for('static', filename='lists/hard-no.tsv') }}" class="btn btn-danger">Download Hard No List</a></li>
+            <li><a href="{{ url_for('static', filename='lists/pile.tsv') }}" class="btn btn-warning">Download Pile List</a></li>
+        </ul>
+        <h1>Rushee List</h1>
+
+    <hr>
+
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    {% for message in messages %}
+    <div class="alert alert-success">
+        <strong>{{ message }}</strong>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+    </div>
+    <h2>Check ins for event: <b>{{ total_count }}</b>. Decisions left: <b>{{ decide_count }}</b></h2>
+    <div class="container" style="width: 60%">
+        {% for rushee in rushees %}
+            <h4>Rushee: {{ rushee.name }} ( {{ rushee.computing_id }} )
+            <span class="pull-right">
+                <a class="btn btn-success" href={{ url_for('decision', rushee=rushee.id, decision_type='hard-yes') }}>Hard Yes</a>
+                <a class="btn btn-danger" href={{ url_for('decision', rushee=rushee.id, decision_type='hard-no') }}>Hard No</a>
+                <a class="btn btn-warning" href={{ url_for('decision', rushee=rushee.id, decision_type='pile') }}>Pile</a>
+            </span>
+            </h4>
+            <p><b>Year:</b> {{ rushee.year }} -- <b>Dorm:</b> {{ rushee.dorm }}</p>
+            <img src={{ url_for('static', filename=rushee.pic) }}>
+            <hr>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
+
+{% block head %}
+{{super()}}
+{{fixes.ie8()}}
+{% endblock %}
