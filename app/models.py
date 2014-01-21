@@ -3,7 +3,6 @@ import os
 import time
 
 class Rushee(db.Model):
-    __tablename__ = 'rushee'
     id = db.Column(db.Integer, primary_key = True)
     name = db.Column(db.String(25))
     computing_id = db.Column(db.String(7))
