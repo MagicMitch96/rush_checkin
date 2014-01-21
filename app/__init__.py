@@ -12,12 +12,8 @@ LOG = logging.getLogger('werkzeug')
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 app = Flask(__name__)
-app.config.update(
-    DEBUG = True,
-)
-
 # app configuration
-app.config['SECRET_KEY'] = 'alphasig'
+app.config.from_pyfile('config.py')
 
 # use sqlite locally
 if os.environ.get('DATABASE_URL') is None:
@@ -26,14 +22,18 @@ if os.environ.get('DATABASE_URL') is None:
 # use postgres remote
 else:
     app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
-app.config['BASIC_AUTH_USERNAME'] = 'alphasig'
-app.config['BASIC_AUTH_PASSWORD'] = 'inphi1845'
 
 # extensions
 db = SQLAlchemy(app)
 bootstrap = Bootstrap(app)
 basic_auth = BasicAuth(app)
 CsrfProtect(app)
+
+# heroku logging
+stream_handler = logging.StreamHandler()
+app.logger.addHandler(stream_handler)
+app.logger.setLevel(logging.INFO)
+app.logger.info('rushcheckin startup')
 
 from app import models
 from app import views
