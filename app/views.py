@@ -6,6 +6,11 @@ from forms import RusheeForm
 
 import os
 
+def flash_errors(form):
+    for field, errors in form.errors.items():
+        for err in errors:
+            flash("Please fill out %s" % getattr(form, field).label.text)
+
 @app.route('/', methods=['GET', 'POST'])
 def add():
     form = RusheeForm()

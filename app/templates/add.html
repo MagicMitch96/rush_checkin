@@ -12,14 +12,14 @@
         <hr>
 
         {% with messages = get_flashed_messages() %}
-        {% if messages %}
-        {% for message in messages %}
-        <div class="alert alert-info">
-            <strong>{{ message }}</strong>
-            {% endfor %}
+            {% if messages %}
+                {% for message in messages %}
+                <div class="alert alert-info">
+                    <strong>{{ message }}</strong>
+                </div>
+                {% endfor %}
             {% endif %}
-            {% endwith %}
-        </div>
+        {% endwith %}
         <div class="row">
             <div class="col-md-6">
                 <table>

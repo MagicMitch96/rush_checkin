@@ -15,13 +15,14 @@
     <hr>
 
     {% with messages = get_flashed_messages() %}
-    {% if messages %}
-    {% for message in messages %}
-    <div class="alert alert-success">
-        <strong>{{ message }}</strong>
-        {% endfor %}
+        {% if messages %}
+            {% for message in messages %}
+            <div class="alert alert-success">
+                <strong>{{ message }}</strong>
+            </div>
+            {% endfor %}
         {% endif %}
-        {% endwith %}
+    {% endwith %}
     </div>
     <h2>Check ins for event: <b>{{ total_count }}</b>. Decisions left: <b>{{ decide_count }}</b></h2>
     <div class="container" style="width: 60%">
